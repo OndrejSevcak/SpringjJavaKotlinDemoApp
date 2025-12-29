@@ -2,19 +2,27 @@ package com.services.impl;
 
 import com.services.BluePrinter;
 import com.services.ColourPrinter;
+import com.services.RedPrinter;
 
 public class ColourPrinterService implements ColourPrinter {
 
     private final BluePrinter bluePrinter;
-    private final BluePrinter bluePrinterCzech;
+    private final RedPrinter redPrinter;
 
-    public ColourPrinterService() {
+    //no DI
+    /*public ColourPrinterService() {
         this.bluePrinter = new EnglishBluePrinter();
-        this.bluePrinterCzech = new CzechBluePrinter();
+        this.redPrinter = new EnglishRedPrinter();
+    }*/
+
+    //using DI and configured Beans
+    public ColourPrinterService(BluePrinter bluePrinter, RedPrinter redPrinter){
+        this.bluePrinter = bluePrinter;
+        this.redPrinter = redPrinter;
     }
 
     @Override
     public String printColour() {
-        return String.join(",", bluePrinter.print(), bluePrinterCzech.print());
+        return String.join(",", bluePrinter.print(), redPrinter.print());
     }
 }

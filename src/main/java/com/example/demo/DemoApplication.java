@@ -14,7 +14,13 @@ import com.example.kotlin.utilityKtln;
 @SpringBootApplication
 public class DemoApplication {
 
-	public static void main(String[] args) {
+    private final ColourPrinter printerService;
+
+    public DemoApplication(ColourPrinter printerService) {
+        this.printerService = printerService;
+    }
+
+    public static void main(String[] args) {
 		SpringApplication.run(DemoApplication.class, args);
 	}
 
@@ -32,8 +38,8 @@ public class DemoApplication {
             int numberFromKotlin = utilityKtln.Companion.getNumber();
             System.out.println("A number from KOTLIN class: " + numberFromKotlin);
 
-            final ColourPrinter printer = new ColourPrinterService();
-            System.out.println("ColourPrinter output: " + printer.printColour());
+            //final ColourPrinter printer = new ColourPrinterService();
+            System.out.println("ColourPrinter output: " + printerService.printColour());
         };
     }
 
