@@ -12,8 +12,8 @@ import org.springframework.context.annotation.Bean;
 import java.util.Arrays;
 import com.intro.kotlin.Utility;
 
-//@SpringBootApplication(scanBasePackages = {"com.example.demo", "com.config"})
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {"com.intro", "com.intro.example.demo"})
+//@SpringBootApplication
 public class DemoApplication {
 
     private final ColourPrinter printerService;
