@@ -1,55 +1,91 @@
 package com.intro.services.impl.bank;
 
+import com.intro.model.Account;
+import com.intro.repository.AccountRepository;
 import com.intro.services.AccountProvider;
-import com.intro.services.BalanceProvider;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.List;
+import java.util.Optional;
 
 @Component
 public class AccountService implements AccountProvider {
 
-    private List<String> accounts;
-    private final BalanceProvider balanceProvider;
+    private final AccountRepository accountRepository;
 
-    public AccountService(BalanceProvider balanceProvider) {
-        this.balanceProvider = balanceProvider;
-        this.accounts = new java.util.ArrayList<>();
+    public AccountService(AccountRepository accRespository) {
+        this.accountRepository = accRespository;
     }
 
     @Override
     public boolean AccountExists(String accountId) {
-        return accounts.contains(accountId);
+        return accountRepository.existsById(accountId);
     }
 
     @Override
-    public boolean AddAccount(String accountId) {
-        if (accounts.contains(accountId)) {;
-            return false;
+    public String AddAccount(String accountId, String ownerId) {
+        if (accountRepository.existsById(accountId)) {;
+            return null;
         }
-        accounts.add(accountId);
-        balanceProvider.addAccount(accountId, 0.0);
-        return true;
+
+        Account account = new Account(ownerId, 0.00);
+        Account savedAccount = accountRepository.save(account);
+        return savedAccount.getId();
     }
 
     @Override
-    public boolean AddAccount(String accountId, Double initialBalance) {
-        if (accounts.contains(accountId)) {;
-            return false;
+    public String AddAccount(String accountId, String ownerId, Double initialBalance) {
+        if (accountId != null && accountRepository.existsById(accountId)) {;
+            return null;
         }
-        accounts.add(accountId);
-        balanceProvider.addAccount(accountId, initialBalance);
-        return true;
+        Account account = new Account(ownerId, initialBalance);
+        Account savedAccount = accountRepository.save(account);
+        return savedAccount.getId();
     }
 
     @Override
     public boolean RemoveAccount(String accountId) {
-        if (!accounts.contains(accountId)) {;
+        if (!accountRepository.existsById(accountId)) {;
             return false;
         }
-        accounts.remove(accountId);
-        balanceProvider.removeAccount(accountId);
+
+        Account accountToDelete = accountRepository.findById(accountId).orElse(null);
+        if (accountToDelete == null) {
+            return false;
+        }
+
+        accountRepository.delete(accountToDelete);
         return true;
+    }
+
+    @Override
+    public double GetBalance(String accountId) {
+        if(!accountRepository.existsById(accountId)){
+            return -1;
+        }
+
+        return accountRepository.findById(accountId)
+                .map(Account::getBalance)   //operátor :: je reference na metodu
+                .orElse(-1.0);
+    }
+
+    @Override
+    public double SetBalance(String accountId, double amount) {
+        if(!accountRepository.existsById(accountId)){
+            return -1;
+        }
+
+        Optional<Account> account =  accountRepository.findById(accountId);
+        if(account.isPresent()){
+            account.get().setBalance(amount);
+        }
+        //functional style equivalent:
+        //account.ifPresent(value -> value.setBalance(amount))
+
+        if(account.isEmpty()){
+            return -1;
+        }
+
+        accountRepository.save(account.get());
+        return amount;
     }
 }

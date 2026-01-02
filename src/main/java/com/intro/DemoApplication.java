@@ -1,7 +1,6 @@
 package com.intro;
 
 import com.intro.services.AccountProvider;
-import com.intro.services.BalanceProvider;
 import com.intro.services.ColourPrinter;
 import com.intro.services.PaymentGateway;
 import org.springframework.boot.CommandLineRunner;
@@ -20,13 +19,11 @@ public class DemoApplication {
     private final ColourPrinter printerService;
     private final PaymentGateway paymentGateway;
     private final AccountProvider accountProvider;
-    private final BalanceProvider balanceProvider;
 
-    public DemoApplication(ColourPrinter printerService, PaymentGateway paymentGateway, AccountProvider accountProvider, BalanceProvider balanceProvider) {
+    public DemoApplication(ColourPrinter printerService, PaymentGateway paymentGateway, AccountProvider accountProvider) {
         this.printerService = printerService;
         this.paymentGateway = paymentGateway;
         this.accountProvider = accountProvider;
-        this.balanceProvider = balanceProvider;
     }
 
     public static void main(String[] args) {
@@ -52,13 +49,12 @@ public class DemoApplication {
             System.out.println("ColourPrinter output: " + printerService.printColour());
 
             //testing @ComponentScan
-            String accountId = "acc001";
-            boolean accountCreated = accountProvider.AddAccount(accountId, 500.0);
-            System.out.println("Account " + accountId + " created: " + accountCreated);
+            String accountCreatedId = accountProvider.AddAccount(null, "jimmy@john.com", 500.0);
+            System.out.println("Account created: " + accountCreatedId);
             double paymentAmount = 150.0;
-            boolean paymentProcessed = paymentGateway.processPayment(accountId, paymentAmount);
-            System.out.println("Payment of " + paymentAmount + " processed for account " + accountId + ": " + paymentProcessed);
-            System.out.println("Remaining balance: " + balanceProvider.getBalance(accountId));
+            boolean paymentProcessed = paymentGateway.processPayment(accountCreatedId, paymentAmount);
+            System.out.println("Payment of " + paymentAmount + " processed for account " + accountCreatedId + ": " + paymentProcessed);
+            System.out.println("Remaining balance: " + accountProvider.GetBalance(accountCreatedId));
 
         };
     }
