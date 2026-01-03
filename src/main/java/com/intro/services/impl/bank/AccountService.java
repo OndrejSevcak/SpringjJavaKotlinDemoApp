@@ -4,10 +4,11 @@ import com.intro.model.Account;
 import com.intro.repository.AccountRepository;
 import com.intro.services.AccountProvider;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-@Component
+@Service
 public class AccountService implements AccountProvider {
 
     private final AccountRepository accountRepository;
